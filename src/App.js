@@ -16,7 +16,9 @@ const ChoiceCard = (props) => {
         : "border-danger"
       : "border-dark"
       }`}>
+      <p>{props.title}</p>
       <img src={props.shape === 'rock' ? rock : props.shape === 'paper' ? paper : scissors} alt={props.shape} />
+      <p>{props.winner === 'win' ? 'WIN' : props.winner === 'tie' ? 'TIE' : 'LOSS'}</p>
     </div >
   );
 };
