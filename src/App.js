@@ -1,4 +1,5 @@
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Navbar, Nav, NavDropdown, Form, FormControl, Button, ButtonGroup } from 'react-bootstrap';
 import './App.css';
 import rock from "./images/rock.png";
 import paper from "./images/paper.png";
@@ -19,9 +20,12 @@ const ChoiceCard = (props) => {
       <p>{props.title}</p>
       <img src={props.shape === 'rock' ? rock : props.shape === 'paper' ? paper : scissors} alt={props.shape} />
       <p>{props.winner === 'win' ? 'WIN' : props.winner === 'tie' ? 'TIE' : 'LOSS'}</p>
+      <p>{props.score}</p>
     </div >
   );
 };
+
+
 
 
 function Navigationbar() {
@@ -51,68 +55,93 @@ function Navigationbar() {
 }
 
 
+
+
 function App() {
   const shapes = ["rock", "paper", "scissors"];
+  const [playerName, setplayerName] = useState("Player")
+  const [playerChoice, setPlayerChoice] = useState("");
+  const [playerResult, setPlayerResult] = useState("tie");
+  const [playerScore, setPlayerScore] = useState(0);
+  const [computerChoice, setComputerChoice] = useState("");
+  const [computerResult, setComputerResult] = useState("tie");
+  const [computerScore, setComputerScore] = useState(0);
 
-  let computerChoice = 'rock';
-  let playerChoice = 'paper';
-  let computerResult = 'loss';
-  let playerResult = 'win';
-
-  const randomMove = () => {
-    computerChoice = shapes[Math.floor(Math.random() * 3)];
-    playerChoice = shapes[Math.floor(Math.random() * 3)];
-    console.log("Computer: ", computerChoice);
-    console.log("Player: ", playerChoice);
+  const randomMove = (move) => {
+    const newComputerChoice = shapes[Math.floor(Math.random() * 3)];
+    // const newPlayerChoice = shapes[Math.floor(Math.random() * 3)];
+    setPlayerChoice(move);
+    setComputerChoice(newComputerChoice);
+    calculateWinner(newComputerChoice, move);
   };
 
-  const calculateWinner = () => {
+  const calculateWinner = (computerChoice, playerChoice) => {
     if (computerChoice === playerChoice) {
-      computerResult = 'tie';
-      playerResult = 'tie';
+      setComputerResult("tie");
+      setPlayerResult("tie");
     } else if (computerChoice === 'rock') {
       if (playerChoice === 'paper') {
-        computerResult = 'loss';
-        playerResult = 'win';
+        setComputerResult("loss");
+        setPlayerResult("win");
+        setPlayerScore(playerScore + 1);
       } else {
-        computerResult = 'win';
-        playerResult = 'loss';
+        setComputerResult("win");
+        setComputerScore(computerScore + 1);
+        setPlayerResult("loss");
       }
     } else if (computerChoice === 'paper') {
       if (playerChoice === 'scissors') {
-        computerResult = 'loss';
-        playerResult = 'win';
+        setComputerResult("loss");
+        setPlayerResult("win");
+        setPlayerScore(playerScore + 1);
       } else {
-        computerResult = 'win';
-        playerResult = 'loss';
+        setComputerResult("win");
+        setComputerScore(computerScore + 1);
+        setPlayerResult("loss");
       }
     } else {
       if (playerChoice === 'rock') {
-        computerResult = 'loss';
-        playerResult = 'win';
+        setComputerResult("loss");
+        setPlayerResult("win");
+        setPlayerScore(playerScore + 1);
       } else {
-        computerResult = 'win';
-        playerResult = 'loss';
+        setComputerResult("win");
+        setComputerScore(computerScore + 1);
+        setPlayerResult("loss");
       }
     }
   };
 
-  const play = () => {
-    randomMove();
-    calculateWinner();
-  };
+  const handleChange = (event) => {
+    setplayerName(event.target.value)
+  }
 
-  play();
+  const restart = () => {
+    setplayerName("Player")
+    setPlayerChoice("");
+    setPlayerResult("tie");
+    setPlayerScore(0);
+    setComputerChoice("");
+    setComputerResult("tie");
+    setComputerScore(0);
+  };
 
 
   return (
     <div className="App">
       <Navigationbar />
+      <input className="m-4" onChange={(event) => handleChange(event)}></input>
       <div className="d-flex justify-content-center flex-wrap">
-        <ChoiceCard title="You" winner={playerResult} shape={playerChoice} />
-        <ChoiceCard title="Computer" winner={computerResult} shape={computerChoice} />
+        <ChoiceCard title={playerName} winner={playerResult} shape={playerChoice} score={playerScore} />
+        <ChoiceCard title="Computer" winner={computerResult} shape={computerChoice} score={computerScore} />
       </div>
-      <Button onClick={play}>Random</Button>
+      <ButtonGroup>
+        <Button onClick={() => randomMove('rock')}>Rock</Button>
+        <Button onClick={() => randomMove('paper')}>Paper</Button>
+        <Button onClick={() => randomMove('scissors')}>Scissors</Button>
+        <Button onClick={restart}>Restart</Button>
+      </ButtonGroup>
+
     </div >
   );
 }
